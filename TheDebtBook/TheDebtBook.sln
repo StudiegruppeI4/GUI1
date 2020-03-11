@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheDebtBook", "TheDebtBook\TheDebtBook.csproj", "{B766DCE7-D106-459C-8652-6A9ED5BC4588}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B766DCE7-D106-459C-8652-6A9ED5BC4588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B766DCE7-D106-459C-8652-6A9ED5BC4588}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B766DCE7-D106-459C-8652-6A9ED5BC4588}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B766DCE7-D106-459C-8652-6A9ED5BC4588}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB809583-F611-4B80-8C5C-9CEDCD80175A}
+	EndGlobalSection
+EndGlobal
