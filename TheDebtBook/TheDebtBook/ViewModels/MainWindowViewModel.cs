@@ -2,9 +2,15 @@
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Runtime.Remoting.Channels;
+using System.Security.Cryptography.X509Certificates;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Navigation;
 using System.Windows.Threading;
+using Prism.Commands;
 using Prism.Mvvm;
 using TheDebtBook.Models;
+using TheDebtBook.Views;
 
 namespace TheDebtBook.ViewModels
 {
@@ -29,6 +35,8 @@ namespace TheDebtBook.ViewModels
             timer.Start();
         }
 
+        #region Properties
+
         public Debtor CurrentDebtor
         {
             get => _currentDebtor;
@@ -48,5 +56,119 @@ namespace TheDebtBook.ViewModels
         }
 
         public Clock Clock { get; set; } = new Clock();
+
+        public double TotalDebt
+        {
+            get
+            {
+                double debt = 0;
+                foreach (var debtor in Debtors)
+                {
+                    debt += debtor.Debt;
+                }
+                return debt;
+            }
+        }
+
+        #endregion
+
+        #region Commands
+
+        private ICommand _addDebtorCommand;
+
+        public ICommand AddDebtorCommand
+        {
+            get => _addDebtorCommand ?? (_addDebtorCommand = new DelegateCommand(() =>
+            {
+                var newDebtor = new Debtor();
+                var vm = new AddDebtorViewModel(newDebtor);
+                var dlg = new AddDebtorView()
+                {
+                    DataContext = vm
+                };
+                if (dlg.ShowDialog() == true)
+                {
+                    if (NameAlreadyTaken(newDebtor))
+                        MessageBox.Show($"{newDebtor.Name} already taken. Please enter a new name.", "Name already taken", MessageBoxButton.OK, MessageBoxImage.Error);
+                    else
+                    {
+                        Debtors.Add(newDebtor);
+                        newDebtor.DebtEntries.Add(new DebtEntry(DateTime.Now, newDebtor.Debt));
+                        CurrentDebtor = newDebtor;
+                        CurrentIndex = (Debtors.Count - 1);
+                    }
+                    RaisePropertyChanged("TotalDebt");
+                }
+            }));
+        }
+
+        private bool NameAlreadyTaken(Debtor debtor)
+        {
+            bool taken = false;
+            foreach (var person in Debtors)
+            {
+                if (person.Name == debtor.Name)
+                    taken = true;
+            }
+            return taken;
+        }
+
+        private ICommand _listViewItemDoubleClickCommand;
+
+        public ICommand ListViewItemDoubleClickCommand
+        {
+            get => _listViewItemDoubleClickCommand ??
+                   (_listViewItemDoubleClickCommand = new DelegateCommand(() =>
+                   {
+                       var tempDebtor = CurrentDebtor.Clone();
+                       var vm = new DebtorViewModel(tempDebtor);
+
+                       var dlg = new DebtorView()
+                       {
+                           DataContext = vm,
+                           Owner = App.Current.MainWindow
+                       };
+                       if (dlg.ShowDialog() == true)
+                       {
+                           CurrentDebtor.Debt = tempDebtor.Debt;
+                           CurrentDebtor.DebtEntries = tempDebtor.DebtEntries;
+                           RaisePropertyChanged("TotalDebt");
+                       }
+                   }, () => 
+                       { return CurrentIndex >= 0; }
+                       ).ObservesProperty(() => CurrentIndex));
+        }
+
+        private ICommand _deleteDebtorCommand;
+
+        public ICommand DeleteDebtorCommand
+        {
+            get => _deleteDebtorCommand ??
+                   (_deleteDebtorCommand = new DelegateCommand(DeleteDebtorCommandExecute, DeleteDebtorCommandCanExecute).ObservesProperty(() => CurrentIndex));
+        }
+
+        private void DeleteDebtorCommandExecute()
+        {
+            MessageBoxResult res = MessageBox.Show($"Are you sure you want to delete {CurrentDebtor.Name}?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            if (res == MessageBoxResult.Yes)
+            {
+                Debtors.Remove(CurrentDebtor);
+                if (Debtors.Count > 0)
+                {
+                    CurrentDebtor = Debtors[(Debtors.Count - 1)];
+                    CurrentIndex = (Debtors.Count - 1);
+                }
+                RaisePropertyChanged("TotalDebt");
+            }
+        }
+
+        private bool DeleteDebtorCommandCanExecute()
+        {
+            if (Debtors.Count > 0 && CurrentIndex >= 0)
+                return true;
+            return false;
+        }
+
+        #endregion
     }
 }

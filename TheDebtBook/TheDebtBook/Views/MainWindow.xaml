@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheDebtBook"
         xmlns:viewModels="clr-namespace:TheDebtBook.ViewModels"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:prism="http://prismlibrary.com/"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="The Debt Book" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
         Background="#E8C547">
 
     <Window.DataContext>
@@ -53,33 +56,40 @@
             </Grid.RowDefinitions>
 
             <Menu Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" DockPanel.Dock="Top" Name="TopMenu" Background="#CDD1C4">
-                <MenuItem Header="_File"></MenuItem>
-                <MenuItem Header="Option 1"></MenuItem>
-                <MenuItem Header="Option 2"></MenuItem>
-                <MenuItem Header="Option 3"></MenuItem>
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Save"/>
+                    <MenuItem Header="Save _as"/>
+                    <MenuItem Header="_Exit"/>
+                </MenuItem>
 
             </Menu>
 
             <Label Grid.Column="0" Grid.Row="1" DockPanel.Dock="Top" HorizontalAlignment="Center">
-                Depths
+                Debts
             </Label>
 
-            <DataGrid Name="debtorsGrid" 
-                      Grid.Row="2"
-                      ItemsSource="{Binding Debtors}"
-                      SelectedItem="{Binding CurrentDebtor}"
-                      SelectedIndex="{Binding CurrentIndex}"
-                      IsSynchronizedWithCurrentItem="True"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      IsReadOnly="True"
-                      MinRowHeight="30"
-                      Margin="5"
-                      Background="#E8C547"/>
+            <ListView Margin="10" Name="DebtorsView" Grid.Row="2" Grid.Column="0"
+                      ItemsSource="{Binding Debtors}" SelectedItem="{Binding CurrentDebtor}" SelectedIndex="{Binding CurrentIndex}" Background="#E8C547" HorizontalContentAlignment="Center"
+                      FontSize="18" BorderThickness="0">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="Debt" Width="150" DisplayMemberBinding="{Binding Debt}"/>
+                    </GridView>
+                </ListView.View>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <prism:InvokeCommandAction Command="{Binding ListViewItemDoubleClickCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListView>
 
             <StatusBar Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" DockPanel.Dock="Bottom" Background="#CDD1C4">
                 <StatusBarItem Content="Debtors:"></StatusBarItem>
                 <StatusBarItem Content="{Binding Debtors.Count}"></StatusBarItem>
+                <StatusBarItem Margin="10, 0"></StatusBarItem>
+                <StatusBarItem Content="Total debt:"></StatusBarItem>
+                <StatusBarItem Content="{Binding TotalDebt}"></StatusBarItem>
                 <StatusBarItem HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin ="4,0" Text="{Binding Clock.Date}"/>
@@ -90,17 +100,43 @@
 
             <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" 
                         Orientation="Vertical" VerticalAlignment="Center">
-                <Button>Add Debtor</Button>
-                <Button>Delete Debtor</Button>
-                <Button Content="Test 3">
+                <Button Command="{Binding Path=AddDebtorCommand}"
+                        Content="Add Debtor">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="7"></Setter>
                         </Style>
                     </Button.Resources>
                 </Button>
-                <Button>Test 4</Button>
-                <Button>Test 5</Button>
+                <Button Command="{Binding Path=DeleteDebtorCommand}" 
+                        Content="Delete Debtor">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="7"></Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Content="Filler button">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="7"></Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Content="Filler button">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="7"></Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Content="Filler button">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="7"></Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </StackPanel>
 
         </Grid>
