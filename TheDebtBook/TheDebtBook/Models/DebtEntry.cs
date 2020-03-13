@@ -9,6 +9,13 @@ namespace TheDebtBook.Models
         private double _amount;
         private string _description;
 
+        public DebtEntry()
+        {
+            EntryDate = DateTime.Now;
+            Amount = 0;
+            Description = "";
+        }
+
         public DebtEntry(DateTime entryDate, double amount, string description="")
         {
             EntryDate = entryDate;

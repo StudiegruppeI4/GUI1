@@ -37,9 +37,10 @@ namespace TheDebtBook.ViewModels
                 new Debtor("Johnny", new DebtEntry(DateTime.Now, 50)),
             };
 
+            /*
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += new EventHandler((object sender, EventArgs e) => Clock.Update());
-            timer.Start();
+            timer.Start();*/
         }
 
         #region Properties
@@ -304,6 +305,11 @@ namespace TheDebtBook.ViewModels
                     XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Debtor>));
                     TextReader reader = new StreamReader(_filepath);
                     Debtors = (ObservableCollection<Debtor>) serializer.Deserialize(reader);
+                    if (Debtors.Count > 0)
+                    {
+                        CurrentDebtor = Debtors[0];
+                        CurrentIndex = 0;
+                    }
                     reader.Close();
                 }
                 catch (Exception ex)
