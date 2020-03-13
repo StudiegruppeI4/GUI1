@@ -16,11 +16,6 @@
         <viewModels:MainWindowViewModel/>
     </Window.DataContext>
 
-    <Window.Resources>
-        
-    </Window.Resources>
-
-
     <DockPanel Name="Main">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -47,8 +42,7 @@
             </Menu>
 
             <Label Grid.Column="0" Grid.Row="1" DockPanel.Dock="Top" HorizontalAlignment="Center"
-                   Style="{StaticResource CustomLabel}"
-                   >
+                   Style="{StaticResource CustomLabel}">
                 Debts
             </Label>
 
