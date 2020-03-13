@@ -37,10 +37,10 @@ namespace TheDebtBook.ViewModels
                 new Debtor("Johnny", new DebtEntry(DateTime.Now, 50)),
             };
 
-            /*
+            
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += new EventHandler((object sender, EventArgs e) => Clock.Update());
-            timer.Start();*/
+            timer.Start();
         }
 
         #region Properties
