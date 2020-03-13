@@ -8,7 +8,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:prism="http://prismlibrary.com/"
         mc:Ignorable="d"
-        Title="The Debt Book" Height="450" Width="800"
+        Title="{Binding Path=Title}" Height="450" Width="800"
         WindowStartupLocation="CenterScreen"
         Background="#E8C547">
 
@@ -57,9 +57,11 @@
 
             <Menu Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" DockPanel.Dock="Top" Name="TopMenu" Background="#CDD1C4">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Save"/>
-                    <MenuItem Header="Save _as"/>
-                    <MenuItem Header="_Exit"/>
+                    <MenuItem Header="_New" Command="{Binding Path=NewFileCommand}"/>
+                    <MenuItem Header="_Open" Command="{Binding Path=OpenFileCommand}"/>
+                    <MenuItem Header="_Save" Command="{Binding Path=SaveCommand}"/>
+                    <MenuItem Header="Save _as" Command="{Binding Path=SaveAsCommand}"/>
+                    <MenuItem Header="_Exit" Command="{Binding Path=ExitCommand}"/>
                 </MenuItem>
 
             </Menu>

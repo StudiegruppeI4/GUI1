@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Dynamic;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Channels;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using System.Xml.Serialization;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using TheDebtBook.Models;
@@ -20,6 +24,9 @@ namespace TheDebtBook.ViewModels
         private ObservableCollection<Debtor> _debtors;
         private int _currentIndex;
         private DispatcherTimer timer = new DispatcherTimer();
+        private string _filepath = "";
+        private string _filename = "New";
+        private readonly string _appTitle = "The Debt Book";
 
         public MainWindowViewModel()
         {
@@ -68,6 +75,21 @@ namespace TheDebtBook.ViewModels
                 }
                 return debt;
             }
+        }
+
+        public string Filename
+        {
+            get => _filename;
+            set
+            {
+                SetProperty(ref _filename, value);
+                RaisePropertyChanged("Title");
+            }
+        }
+
+        public string Title
+        {
+            get => $"{_appTitle} - {Filename}";
         }
 
         #endregion
@@ -167,6 +189,144 @@ namespace TheDebtBook.ViewModels
             if (Debtors.Count > 0 && CurrentIndex >= 0)
                 return true;
             return false;
+        }
+
+        private ICommand _saveAsCommand;
+
+        public ICommand SaveAsCommand
+        {
+            get => _saveAsCommand ?? (_saveAsCommand = new DelegateCommand<string>(SaveAsCommandExecute));
+        }
+
+        private void SaveAsCommandExecute(string fileName)
+        {
+            var dialog = new SaveFileDialog()
+            {
+                Filter = "Debtors Book documents|*.txt|All Files|*.*",
+                DefaultExt = "txt"
+            };
+            if (_filepath == "")
+            {
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+            else
+            {
+                dialog.InitialDirectory = Path.GetDirectoryName(_filepath);
+            }
+
+            if (dialog.ShowDialog(App.Current.MainWindow) == true)
+            {
+                _filepath = dialog.FileName;
+                Filename = Path.GetFileName(_filepath);
+                SaveFile();
+            }
+        }
+
+        private ICommand _saveCommand;
+
+        public ICommand SaveCommand
+        {
+            get => _saveCommand ?? (_saveCommand = new DelegateCommand(SaveCommandExecute, SaveCommandCanExecute).
+                       ObservesProperty(() => Debtors.Count));
+        }
+
+        private void SaveCommandExecute()
+        {
+            SaveFile();
+        }
+
+        private bool SaveCommandCanExecute()
+        {
+            return (_filename != "") && (Debtors.Count > 0);
+        }
+
+        private void SaveFile()
+        {
+            try
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Debtor>));
+                TextWriter writer = new StreamWriter(_filepath);
+                serializer.Serialize(writer, Debtors);
+                writer.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Unable to save file", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private ICommand _newFileCommand;
+        public ICommand NewFileCommand
+        {
+            get { return _newFileCommand ?? (_newFileCommand = new DelegateCommand(NewFileCommandExecute)); }
+        }
+
+        private void NewFileCommandExecute()
+        {
+            MessageBoxResult res = MessageBox.Show("Any unsaved data will be lost. Are you sure you want to initiate a new file?", "Warning",
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            if (res == MessageBoxResult.Yes)
+            {
+                Debtors.Clear();
+                Filename = "";
+            }
+        }
+
+        private ICommand _openFileCommand;
+
+        public ICommand OpenFileCommand
+        {
+            get => _openFileCommand ?? (_openFileCommand = new DelegateCommand<string>(OpenFileCommandExecute));
+        }
+
+        private void OpenFileCommandExecute(string fileName)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                Filter = "Debtors Book documents|*.txt|All Files|*.*",
+                DefaultExt = "txt"
+            };
+            if (_filepath == "")
+            {
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+            else
+            {
+                dialog.InitialDirectory = Path.GetDirectoryName(_filepath);
+            }
+
+            if (dialog.ShowDialog(App.Current.MainWindow) == true)
+            {
+                _filepath = dialog.FileName;
+                Filename = Path.GetFileName(_filepath);
+                try
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Debtor>));
+                    TextReader reader = new StreamReader(_filepath);
+                    Debtors = (ObservableCollection<Debtor>) serializer.Deserialize(reader);
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Unable to open file", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private ICommand _exitCommand;
+        public ICommand ExitCommand
+        {
+            get { return _exitCommand ?? (_exitCommand = new DelegateCommand(ExitCommandExecute)); }
+        }
+
+        private void ExitCommandExecute()
+        {
+            MessageBoxResult res = MessageBox.Show("Are you sure you want to close the program? Remember to save your work before you close.", "Warning",
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            if (res == MessageBoxResult.Yes)
+            {
+                Application.Current.MainWindow.Close();
+            }
         }
 
         #endregion
