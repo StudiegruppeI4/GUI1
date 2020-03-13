@@ -17,27 +17,7 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <Style TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="28"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="Foreground" Value="Black"></Setter>
-        </Style>
-
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="50,10"/>
-            <Setter Property="Padding" Value="0, 10"/>
-            <Setter Property="Foreground" Value="#CDD1C4"/>
-            <Setter Property="Background" Value="#4D5061"/>
-            
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="White"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+        
     </Window.Resources>
 
 
@@ -64,13 +44,14 @@
 
             </Menu>
 
-            <Label Grid.Column="0" Grid.Row="1" DockPanel.Dock="Top" HorizontalAlignment="Center">
+            <Label Grid.Column="0" Grid.Row="1" DockPanel.Dock="Top" HorizontalAlignment="Center"
+                   Style="{StaticResource CustomLabel}"
+                   >
                 Debts
             </Label>
 
             <ListView Margin="10" Name="DebtorsView" Grid.Row="2" Grid.Column="0"
-                      ItemsSource="{Binding Debtors}" SelectedItem="{Binding CurrentDebtor}" SelectedIndex="{Binding CurrentIndex}" Background="#E8C547" HorizontalContentAlignment="Center"
-                      FontSize="18" BorderThickness="0">
+                      ItemsSource="{Binding Debtors}" SelectedItem="{Binding CurrentDebtor}" SelectedIndex="{Binding CurrentIndex}" Style="{StaticResource CustomListView}">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
@@ -99,43 +80,18 @@
             </StatusBar>
 
             <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" 
-                        Orientation="Vertical" VerticalAlignment="Center">
+                        Orientation="Vertical" VerticalAlignment="Top"
+                        Margin="0,42"
+                        >
                 <Button Command="{Binding Path=AddDebtorCommand}"
-                        Content="Add Debtor">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="7"></Setter>
-                        </Style>
-                    </Button.Resources>
+                        Content="Add Debtor"
+                        Style="{StaticResource CustomButton}"
+                        >
+
                 </Button>
                 <Button Command="{Binding Path=DeleteDebtorCommand}" 
-                        Content="Delete Debtor">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="7"></Setter>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-                <Button Content="Filler button">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="7"></Setter>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-                <Button Content="Filler button">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="7"></Setter>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-                <Button Content="Filler button">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="7"></Setter>
-                        </Style>
-                    </Button.Resources>
+                     Style="{StaticResource CustomButton}"
+                   >Delete
                 </Button>
             </StackPanel>
 
